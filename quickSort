@@ -1,0 +1,29 @@
+#include <iostream>
+
+using namespace std;
+
+int partition(int* arr, int l, int h)
+{
+    int pivot = arr[h];
+    int pivotPos = l;
+    for (int i = l; i < h; ++i)
+    {
+        if (arr[i] < pivot)
+        {
+            swap(arr[i], arr[pivotPos]);
+            pivotPos++;
+        }
+    }
+    swap(arr[h],arr[pivotPos]);
+    return pivotPos;
+}
+
+void quickSort(int* arr, int left, int right)
+{
+    if (left < right)
+    {
+        int mid = partition(arr,left,right);
+        quickSort(arr,left,mid - 1);
+        quickSort(arr,mid + 1, right);
+    }
+}
