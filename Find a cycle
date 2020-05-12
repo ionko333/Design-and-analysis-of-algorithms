@@ -1,0 +1,91 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>              ///finds one cycle if the graph is cyclic
+
+using namespace std;
+
+enum Color {white, gray, black}; ///white means unvisited, gray means visited but we are not done with it yet (there are neighbours to be visited) and black means - done with it
+int n, m;                        ///n is number of vertices and m is number of edges
+vector<int> graph[1000];         ///similar to an adjacency list
+Color colors[1000];              ///contains the color of each vertex
+int parent[1000];                ///contains the parent of each vertex according to our traversal, the starting vertices have parent 0
+int cycle_start = -1;
+int cycle_end = -1;
+                                ///vertices are 1,2,...,n
+
+void init()
+{
+    int u = 0, v = 0;
+    cin >> n >> m;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v;
+        graph[u].push_back(v);
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        colors[i] = white;
+        parent[i] = 0;
+    }
+}
+
+bool DFS_Visit(int x)
+{
+    colors[x] = gray;
+    for (int i = 0; i < graph[x].size(); i++)
+    {
+        int v = graph[x][i];
+        if (colors[v] == white)
+        {
+            parent[v] = x;
+            return DFS_Visit(v);
+        }
+        else if (colors[v] == gray)
+        {
+            cycle_end = x;
+            cycle_start = v;
+            return true;
+        }
+    }
+    colors[x] = black;
+    return false;
+}
+
+void findCycle()
+{
+    cycle_start = -1;
+    for (int i = 1; i <= n; i++)
+    {
+        if (colors[i] == white && DFS_Visit(i))
+        {
+            break;
+        }
+    }
+    if (cycle_start == -1)
+    {
+        cout << "The graph has no cycles \n";
+    }
+    else
+    {
+        vector<int> cycle;
+        for (int v = cycle_end; v != cycle_start; v = parent[v])
+        {
+            cycle.push_back(v);
+        }
+        cycle.push_back(cycle_start);
+        int size = cycle.size();
+        reverse(cycle.begin(),cycle.end());
+        cout << "We have found a cycle: ";
+        for (auto v: cycle)
+        {
+            cout << v << " ";
+        }
+        cout << endl;
+    }
+}
+int main()
+{
+    init();
+    findCycle();
+    return 0;
+}
