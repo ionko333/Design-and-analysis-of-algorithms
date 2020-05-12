@@ -1,0 +1,89 @@
+#include <iostream>
+#include <queue>
+#include <climits>
+using namespace std;
+
+enum Color {white, gray, black}; ///white means unvisited, gray means visited but we are not done with it yet (there are neighbours to be visited) and black means - done with it
+int n, m;                        ///n is number of vertices and m is number of edges
+vector<int> graph[1000];         ///similar to an adjacency list
+Color colors[1000];              ///contains the color of each vertex
+int dist[1000];                  ///contains the minimal distance from the vertex, with which we initiated BFS_Visit to all the others
+int parent[1000];                ///contains the parent of each vertex according to our traversal, the starting vertices have parent 0
+                                 ///vertices are 1,2,...,n
+void init()
+{
+    int u = 0, v = 0;
+    cin >> n >> m;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v;
+        graph[u].push_back(v);
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        colors[i] = white;
+        dist[i] = INT_MAX;
+        parent[i] = 0;
+    }
+}
+
+void BFS_Visit(int s)   ///traverses the component of s
+{
+    colors[s] = gray;
+    dist[s] = 0;
+    queue<int> q;
+    q.push(s);
+    while (!q.empty())
+    {
+        int v = q.front();
+        q.pop();
+        for (int i = 0; i < graph[v].size(); i++)  ///update color,dist,parent of each neighbor that is not visited and push them in the queue
+        {
+            int u = graph[v][i];
+            if (colors[u] == white)
+            {
+                colors[u] = gray;
+                dist[u] = dist[v] + 1;
+                parent[u] = v;
+                q.push(u);
+            }
+        }
+        colors[v] = black;                     ///we are done with v as it and all of its neighbors have been visited
+    }
+}
+
+
+int BFS_Mod()     ///traverses the whole graph and returns the number of components
+{
+    int count = 0;
+    for (int i = 1; i <= n; i++)
+    {
+        if (colors[i] == white)
+        {
+            count++;             ///counts the number of times BFS_Visit is called which is equivalent to the number of connected components
+            BFS_Visit(i);
+        }
+    }
+    return count;
+}
+int main()
+{
+    init();
+    cout << "number of components in the graph = " << BFS_Mod() << endl;
+    for (int i = 1; i <= n; i++)
+    {
+        cout << dist[i] << " " << endl;
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        if (parent[i] == 0)
+        {
+            cout << "vertex " << i << " has no parent \n";
+        }
+        else
+        {
+            cout << parent[i] << " " << endl;
+        }
+    }
+    return 0;
+}
