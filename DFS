@@ -1,0 +1,70 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+
+enum Color {white, gray, black}; ///white means unvisited, gray means visited but we are not done with it yet (there are neighbours to be visited) and black means - done with it
+int n, m;
+int time;                        ///n is number of vertices and m is number of edges
+vector<int> graph[1000];         ///similar to an adjacency list
+Color colors[1000];              ///contains the color of each vertex
+int parent[1000];                ///contains the parent of each vertex according to our traversal, the starting vertices have parent 0
+int discovered[1000];            ///contains the time during which it was first visited  (when it went gray)
+int finished[1000];              ///contains the time during which it was last visited   (when it went black)
+                                ///vertices are 1,2,...,n
+
+void init()
+{
+    int u = 0, v = 0;
+    cin >> n >> m;
+    for (int i = 0; i < m; i++)
+    {
+        cin >> u >> v;
+        graph[u].push_back(v);
+    }
+    for (int i = 1; i <= n; i++)
+    {
+        colors[i] = white;
+        parent[i] = 0;
+    }
+}
+
+void DFS_Visit(int x)
+{
+    colors[x] = gray;
+    time++;
+    discovered[x] = time;
+    for (int i = 0; i < graph[x].size(); i++)
+    {
+        int v = graph[x][i];
+        if (colors[v] == white)
+        {
+            parent[v] = x;
+            DFS_Visit(v);
+        }
+    }
+    colors[x] = black;
+    time++;
+    finished[x] = time;
+}
+
+int DFS()
+{
+    time = 0;
+    int count = 0;                ///counts the number of components
+    for (int i = 1; i <= n; i++)
+    {
+        if (colors[i] == white)
+        {
+            count++;
+            DFS_Visit(i);
+        }
+    }
+    return count;
+}
+int main()
+{
+    init();
+    cout << DFS() << endl;
+    return 0;
+}
