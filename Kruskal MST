@@ -26,12 +26,14 @@ int getRoot(int u)                          ///when we are the edge (u, v, cost)
     {
         return u;
     }
-    return getRoot(dsu[u]);
+    int root = getRoot(dsu[u]);
+    dsu[u] = root;
+    return root;
 }
 
 void unite(int root1, int root2)        ///after we add a particular edge, we need to unite the two ends to check whether a new edge would cause a cycle
 {
-    dsu[root2] = root1;
+    dsu[root2] = getRoot(root1);
 }
 
 
