@@ -1,0 +1,90 @@
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <vector>                            ///assuming the vertices are 1,2,...,n
+
+using namespace std;
+struct Edge
+{
+    int from;
+    int to;
+    int weight;
+};
+
+bool cmpFunc(const Edge& e1, const Edge& e2)
+{
+    return e1.weight < e2.weight;
+}
+
+Edge arr[1000];                              ///for the sorting
+int dsu[1000];
+vector<pair<int, int> > mst[1000];           ///the actual graph
+
+int getRoot(int u)                          ///when we are the edge (u, v, cost) if root(u) == root(v), then adding this edge will cause a cycle, so we must not add it
+{
+    if(u == dsu[u])
+    {
+        return u;
+    }
+    return getRoot(dsu[u]);
+}
+
+void unite(int root1, int root2)        ///after we add a particular edge, we need to unite the two ends to check whether a new edge would cause a cycle
+{
+    dsu[root2] = root1;
+}
+
+
+int main()
+{
+    int cnt = 0;
+    int n, m;
+    cin >> n >> m;
+    for(int i = 0; i <= n; i++)
+    {
+        dsu[i] = i;
+    }
+    int from = 0, to = 0 , weight = 0;
+    Edge e = {from, to, weight};
+    for(int i = 0; i < m; i++)
+    {
+        cin >> e.from >> e.to >> e.weight;
+        arr[i] = e;
+    }
+    sort(arr, arr + m, cmpFunc);
+    for(int i = 0; i < m; i++)
+    {
+        Edge curr = arr[i];
+        if(getRoot(curr.from) != getRoot(curr.to))
+        {
+            mst[curr.from].push_back({curr.to, curr.weight});
+            mst[curr.to].push_back({curr.from, curr.weight});
+            unite(getRoot(curr.from),getRoot(curr.to));
+            cnt++;
+        }
+        if(cnt == n - 1)                            ///every tree with n vertices contains n-1 edges so we have found the mst if cnt == n - 1 (a small optimizaton)
+        {
+            break;
+        }
+    }
+    ///uncomment if you want to print the mst
+    /*for(int i = 0; i <= n; i++)
+    {
+        for(int j = 0; j < mst[i].size(); j++)
+        {
+            cout << i <<  " " << mst[i][j].first << " " << mst[i][j].second << endl;
+        }
+    }
+    */
+    return 0;
+}
+/* Input to check whether it works
+5 7
+1 2 5
+2 3 6
+1 3 7
+1 4 2
+1 5 3
+4 5 1
+2 5 -1
+*/
