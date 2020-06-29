@@ -1,0 +1,111 @@
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int n, m;
+
+vector<int> graph[1000];         ///similar to an adjacency list
+
+int topSort[1000];
+
+int inDegree[1000];             ///contains the indegree of each vertex
+
+void init()
+
+
+
+{
+
+
+
+    int u = 0, v = 0;
+
+
+
+    cin >> n >> m;
+
+
+
+    for (int i = 0; i < m; i++)
+
+
+
+    {
+
+
+
+        cin >> u >> v;
+
+
+
+        graph[u].push_back(v);
+
+
+
+    }
+
+
+
+}
+
+bool Kahn()
+{
+    for(int i = 1; i <= n; i++)
+    {
+        for(int j = 0; j < graph[i].size(); j++)
+        {
+            int v = graph[i][j];
+            inDegree[v]++;
+        }
+    }
+
+    queue<int> q;
+    for(int i = 1; i <= n; i++)
+    {
+        if(inDegree[i] == 0)
+        {
+            q.push(i);
+        }
+    }
+    int index = 1;
+    while(!q.empty())
+    {
+        int node = q.front();
+        q.pop();
+        topSort[index++] = node;
+        for(int i = 0; i < graph[node].size(); i++)
+        {
+            int t = graph[node][i];
+            inDegree[t]--;
+            if(inDegree[t] == 0)
+            {
+                q.push(t);
+            }
+        }
+    }
+    if(index < n)
+    {
+        return false;
+    }
+    return true;
+}
+
+int main()
+{
+    init();
+
+   if(Kahn())
+   {
+        for(int i = 1; i <= n; i++)
+        {
+            cout << topSort[i] << " ";
+        }
+        cout << endl;
+   }
+   else
+   {
+       cout << "This graph contains a cycle, thus a topSort does not exist! \n";
+   }
+    return 0;
+}
