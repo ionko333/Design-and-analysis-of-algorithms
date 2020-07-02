@@ -1,0 +1,162 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+
+using namespace std;
+
+
+
+enum Color {white, gray, black}; ///white means unvisited, gray means visited but we are not done with it yet (there are neighbours to be visited) and black means - done with it
+
+int n, m;
+
+vector<int> graph[1000];         ///similar to an adjacency list
+
+Color colors[1000];              ///contains the color of each vertex
+
+vector<int> vertices;
+
+vector<int> transposeGraph[1000];
+
+queue<int> q; ///will use to print SCC
+int topSort[1000];
+
+
+void init()
+{
+    int u = 0, v = 0;
+
+    cin >> n >> m;
+
+    for (int i = 0; i < m; i++)
+
+    {
+
+        cin >> u >> v;
+
+        graph[u].push_back(v);
+        transposeGraph[v].push_back(u);
+
+    }
+
+    for (int i = 1; i <= n; i++)
+
+    {
+
+        colors[i] = white;
+
+    }
+
+}
+
+
+
+void DFS_Visit(int x)
+
+{
+
+    colors[x] = gray;
+
+    for (int i = 0; i < graph[x].size(); i++)
+
+    {
+
+        int v = graph[x][i];
+
+        if (colors[v] == white)
+
+        {
+
+
+            DFS_Visit(v);
+
+        }
+
+    }
+
+    colors[x] = black;
+    vertices.push_back(x);
+
+}
+
+
+
+void DFS()
+
+{
+
+    for (int i = 1; i <= n; i++)
+
+    {
+
+        if (colors[i] == white)
+
+        {
+
+            DFS_Visit(i);
+
+        }
+
+    }
+
+}
+
+void getTopSort()
+{
+    DFS();
+    reverse(vertices.begin(), vertices.end());
+    for(int i = 0; i < n; i++)
+    {
+        topSort[i + 1] = vertices[i];
+    }
+}
+
+void SCC_Rec(int x)
+{
+    colors[x] = gray;
+    q.push(x);
+    for(int i = 0; i < transposeGraph[x].size(); i++)
+    {
+        int v = transposeGraph[x][i];
+        if(colors[v] == white)
+        {
+            SCC_Rec(v);
+        }
+    }
+    colors[x] = black;
+}
+
+void stronglyConnectedComponents()
+{
+    for(int i = 1; i <= n; i++)
+    {
+        colors[i] = white;
+    }
+    for(int i = 1; i <= n; i++)
+    {
+        if(colors[topSort[i]] == white)
+        {
+            SCC_Rec(topSort[i]);
+            while(!q.empty())
+            {
+                cout << q.front() << " ";
+                q.pop();
+            }
+             cout << endl;
+        }
+    }
+}
+
+void kosaraju()
+{
+    getTopSort();
+    stronglyConnectedComponents();
+}
+
+int main()
+{
+    init();
+    kosaraju();
+    return 0;
+}
