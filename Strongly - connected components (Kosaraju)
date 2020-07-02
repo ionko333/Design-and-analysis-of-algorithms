@@ -110,6 +110,10 @@ void getTopSort()
     {
         topSort[i + 1] = vertices[i];
     }
+    for(int i = 1; i <= n; i++)
+    {
+        colors[i] = white;
+    }
 }
 
 void SCC_Rec(int x)
