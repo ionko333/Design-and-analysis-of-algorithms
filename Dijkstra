@@ -15,8 +15,8 @@ struct Edge
 };
 
 vector<Edge> graph[MAXSIZE];     /// graph[i] contains the end and weight of <i,end,weight>
-int dist[MAXSIZE] = {0};         /// this array will contain the minimum distance from the starting vertex to all the other vertices
-int visited[MAXSIZE] = {0};      /// this array will indicate whether we have visited the i-th vertex or not
+int dist[MAXSIZE];         /// this array will contain the minimum distance from the starting vertex to all the other vertices
+int visited[MAXSIZE];      /// this array will indicate whether we have visited the i-th vertex or not
 
 void initDirectedGraph()
 {
