@@ -1,0 +1,93 @@
+#include <iostream>
+#include <climits>
+using namespace std;
+
+struct Edge
+{
+    int from;
+    int to;
+    int weight;
+};
+
+Edge edges[10000];
+int n, m;
+int dist[10000];
+
+void init()
+{
+    cin >> n >> m;
+    Edge e = {0, 0, 0};
+    int f = 0, t = 0, c = 0;
+    for(int i = 0; i < m; i++)
+    {
+        cin >> f >> t >> c;
+        e.from = f;
+        e.to = t;
+        e.weight = c;
+        edges[i] = e;
+    }
+}
+
+void bellmanFord(int start)
+{
+    bool change = false;
+    for(int i = 1; i <= n; i++)
+    {
+        dist[i] = INT_MAX;
+    }
+    dist[start] = 0;
+
+    for(int i = 0; i < n - 1; i++)   ///the shortest path is simple thus is has <= n - 1 edges in it
+    {
+        change = false;
+        for(int j = 0; j < m; j++)
+        {
+            if(dist[edges[j].from] == INT_MAX) ///obviously nothing to update
+            {
+                continue;
+            }
+            if(dist[edges[j].to] > dist[edges[j].from] + edges[j].weight)
+            {
+                dist[edges[j].to] = dist[edges[j].from] + edges[j].weight;
+                change = true;
+            }
+        }
+        if(!change)
+        {
+            break;
+        }
+    }
+    change = false;
+    for(int i = 0; i < m; i++) ///if we have a shortest path with n vertices -> negative cycle
+    {
+        if(dist[edges[i].from] == INT_MAX)
+        {
+            continue;
+        }
+        if(dist[edges[i].to] > dist[edges[i].from] + edges[i].weight)
+        {
+            dist[edges[i].to] = dist[edges[i].from] + edges[i].weight;
+            change = true;
+        }
+    }
+    if(change)
+    {
+        cout << "The graph contains a negative cycle \n";
+        exit(0);
+    }
+}
+
+int main()
+{
+    init();
+    int start;
+    cin >> start;
+    bellmanFord(start);
+    /*for(int i = 1; i <= n; i++)
+    {
+        cout << dist[i] << " ";
+    }
+    cout << endl;
+    */
+    return 0;
+}
