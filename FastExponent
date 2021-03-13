@@ -1,0 +1,25 @@
+#include <iostream>
+
+using namespace std;
+
+
+
+int fastExp(int x, int y)  ///returns x^y
+{
+    if(y == 0)
+    {
+        return 1;
+    }
+    if(y % 2 == 0)
+    {
+        return fastExp(x*x,y/2);
+    }
+    return x * fastExp(x, y - 1);
+}
+
+
+int main()
+{
+    cout << fastExp(5,3) << endl; ///returns 125
+    return 0;
+}
