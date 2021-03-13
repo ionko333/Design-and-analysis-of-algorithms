@@ -1,0 +1,59 @@
+#include <iostream>
+#include <algorithm>
+
+
+using namespace std;
+
+
+
+struct Interval
+{
+    int start;
+    int end;
+    Interval(int s = 0, int e = 0)
+    {
+        start = s;
+        end = e;
+    }
+};
+
+bool cmp(Interval a, Interval b)
+{
+    return a.end < b.end;
+}
+
+
+int intervalScheduling(Interval* arr, int n)
+{
+    if(n == 0)
+    {
+        return 0;
+    }
+    sort(arr,arr + n,cmp);
+    int previousFinish = arr[0].end;
+    int cnt = 1;
+    for(int i = 1; i < n; i++)
+    {
+        if(arr[i].start >= previousFinish)
+        {
+            cnt++;
+            previousFinish = arr[i].end;
+        }
+    }
+    return cnt;
+
+}
+
+
+int main()
+{
+    Interval arr[5];
+    arr[0] = Interval(-5,10);
+    arr[1] = Interval(2,3);
+    arr[2] = Interval(1,5);
+    arr[3] = Interval(0,2);
+    arr[4] = Interval(4,11);
+    cout << intervalScheduling(arr, 5) << "\n";
+    ///outputs 3 (the intervals are <0,2>, <2,3> <4,11>)
+    return 0;
+}
